@@ -1,3 +1,6 @@
+# You can get more information regarding the YAML file here:
+# https://docs.codemagic.io/getting-started/yaml/
+
 # Workflow setup for building Native iOS project
 workflows:
   # The following workflow is for generating a debug build (.app)
@@ -10,15 +13,23 @@ workflows:
       - |
         # run tests
         xcodebuild \
-        -project "App/App.xcodeproj" \ 
+        -project "marebus.xcodeproj" \
+        -scheme "" \
         -sdk iphonesimulator \
         -destination 'platform=iOS Simulator,name=iPhone 11 Pro Max,OS=13.4' \
         clean build test CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
       - |
         # build .app
-        xcodebuild build -project "App/App.xcodeproj"  CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+        xcodebuild build -project "marebus.xcodeproj" -scheme "" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
     artifacts:
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+    publishing:
+      email:
+        recipients:
+          - name@example.com # enter your email id here
+
+  # The following workflow is for generating a release build (.ipa)
+    artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
    
