@@ -9,8 +9,8 @@ workflows:
     scripts:
       - name: Build ipa for distribution
         script: | 
-          xcode-project build-ipa \
-            --project "App/App.xcodeproj" \
+          xcodebuid build
+            --workspace "App/App.xcworkspace" \
             --scheme "App"
     artifacts:
       - build/ios/ipa/*.ipa
