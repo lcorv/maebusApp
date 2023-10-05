@@ -6,7 +6,6 @@ workflows:
     instance_type: mac_mini_m1
     integrations:
       vars:
-        BUNDLE_ID: "io.codemagic.sample.iosnative"
         XCODE_WORKSPACE: "App/App.xcworkspace" # <-- Put the name of your Xcode workspace here
         XCODE_SCHEME: "App" # <-- Put the name of your Xcode scheme here
       xcode: latest
