@@ -1,5 +1,25 @@
+# Workflow setup for building Native iOS project
 workflows:
-    sample-workflow:
-        name: Codemagic Sample Workflow
-        max_build_duration: 120
-        instance_type: mac_mini_m1
+  # The following workflow is for generating a debug build (.app)
+  ios-project-debug: # workflow ID
+    name: Marebus # workflow name
+    environment:
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - |
+        # run tests
+        xcodebuild \
+        -project "App/App.xcodeproj" \
+        -scheme "marebus" \
+        -sdk iphonesimulator \
+        -destination 'platform=iOS Simulator,name=iPhone 11 Pro Max,OS=13.4' \
+        clean build test CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+      - |
+        # build .app
+        xcodebuild build -project "App/App.xcodeproj" -scheme "marebus" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+    artifacts:
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+   
