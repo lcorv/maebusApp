@@ -13,7 +13,7 @@ workflows:
       - |
         # run tests
         xcodebuild \
-        -project "marebus.xcodeproj" \
+        -project "App/marebus.xcodeproj" \
         -scheme "" \
         -sdk iphonesimulator \
         -destination 'platform=iOS Simulator,name=iPhone 11 Pro Max,OS=13.4' \
