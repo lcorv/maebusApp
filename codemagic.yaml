@@ -1,31 +1,35 @@
+
 workflows:
-  ios-workflow:
-    name: iOS Workflow
+  ios-native-workflow:
+    name: iOS Native
     max_build_duration: 120
+    instance_type: mac_mini_m1
+    integrations:
+      vars:
+        BUNDLE_ID: "io.codemagic.sample.iosnative"
+        XCODE_WORKSPACE: "App/App.xcworkspace" # <-- Put the name of your Xcode workspace here
+        XCODE_SCHEME: "App" # <-- Put the name of your Xcode scheme here
+      xcode: latest
+      cocoapods: default
     scripts:
-      - name: Install npm dependencies and update Cordova version
+      - name: Install CocoaPods dependencies
         script: | 
-          npm install
-          npm ci # equivalent of npm install for CI systems.
-            # Requires package-lock.json or npm-shrinkwrap.json to be present
-          cvm install 9.0.0
-          cvm use 9.0.0
-          npm install -g ionic
-          ionic info  
-      -  name: Setup Cordova iOS platform
-         script: | 
-           ionic cordova platform remove ios --nosave
-           ionic cordova platform add ios \
-             --confirm \
-             --no-interactive \
-             --noresources \
-             --save
-      - name: Set up code signing settings on Xcode project
+          pod install
+      - name: Set up provisioning profiles settings on Xcode project
+        script: xcode-project use-profiles
+      - name: Increment build number
         script: | 
-          xcode-project use-profiles
+          cd $CM_BUILD_DIR
+          LATEST_BUILD_NUMBER=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID")
+          agvtool new-version -all $(($LATEST_BUILD_NUMBER + 1))
       - name: Build ipa for distribution
         script: | 
-          cordova build ios --release --device --buildConfig='build.json'
+          xcode-project build-ipa \
+            --workspace "$CM_BUILD_DIR/$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME"
     artifacts:
-      - /Users/builder/clone/platforms/ios/build/device/*.ipa
-      - /tmp/xcodebuild_logs/*.log 
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+   
