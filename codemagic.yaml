@@ -8,7 +8,7 @@ workflows:
     name: Marebus # workflow name
     environment:
       xcode: latest
-      cocoapods: latest
+      cocoapods: 1.12.1
     scripts:
       - |
         # build .app
