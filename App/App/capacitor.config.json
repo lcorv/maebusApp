@@ -1,0 +1,8 @@
+{
+	"appId": "com.marebus.app",
+	"appName": "marebus",
+	"webDir": "dist/marebus",
+	"server": {
+		"androidScheme": "https"
+	}
+}
